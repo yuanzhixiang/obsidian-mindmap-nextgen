@@ -69,18 +69,56 @@
     left: 0;
     right: 0;
     margin: 0;
+    padding: 0;
     display: block !important;
-    border-bottom-style: solid;
-    border-bottom-width: var(--divider-width, 1px);
-    height: var(--divider-width-hover, 4px);
+    
+    /* 彻底重置原生 <hr> 的双重边框 */
+    border: none;
+    background: transparent;
+    
+    /* 恢复成经典的横宽细线 */
+    border-bottom: 1px solid var(--background-modifier-border);
+    
+    height: 10px; /* 稍微加大可拖拽区域，提升命中率 */
     width: 100%;
     cursor: row-resize;
+    z-index: 10;
+    transition: border-bottom-color 0.2s ease, border-bottom-width 0.2s ease;
+}
+
+.block-language-markmap .workspace-leaf-resize-handle:hover {
+    border-bottom: 3px solid var(--interactive-accent);
 }
 
 /* Avoid relying on volatile Obsidian workspace DOM chains for visibility. */
 
 /* keep resize handle inside block in reading mode */
 .block-language-markmap { position: relative }
+
+/* 横向滚动区域：保留滑动能力，但隐藏由于内容超出而产生的原生滚动条UI */
+.mmng-mobile-horizontal-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* 隐藏 Firefox & IE 的滚动条 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+/* 隐藏 Chrome, Safari 的滚动条 */
+.mmng-mobile-horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.mmng-mobile-horizontal-scroll > svg,
+.mmng-mobile-horizontal-scroll svg.markmap {
+    max-width: none !important;
+    min-width: 100%;
+}
+
+.block-language-markmap.mmng-mobile-horizontal-scroll .workspace-leaf-resize-handle {
+    /* 滚动条隐藏后，拖拽线可以名正言顺地平铺在最底部，再也不需要被挤压抬高了 */
+    bottom: 0;
+}
 
 
 

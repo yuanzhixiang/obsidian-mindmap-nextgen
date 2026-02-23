@@ -1,4 +1,4 @@
-import { ButtonComponent, Editor, EditorPosition } from 'obsidian'
+import { ButtonComponent, Editor, EditorPosition, Platform } from 'obsidian'
 import autoBind from 'auto-bind'
 import GrayMatter from 'gray-matter'
 
@@ -13,6 +13,7 @@ import { CodeBlock } from 'src/new/codeBlockHandler'
 import { svgs } from 'src/internal-links/handle-internal-links'
 import { strings } from 'src/translation'
 import { fitWithoutAnimation } from './fit-without-animation'
+import { applyMobileCodeblockLayout, shouldPreferHeightLayout } from './mobile-codeblock-layout'
 
 
 export type CodeBlockRenderer = ReturnType<typeof CodeBlockRenderer>
@@ -31,7 +32,7 @@ export function CodeBlockRenderer(codeBlock: CodeBlock) {
   const rootNode = transformMarkdown(codeBlock.markdown)
   const settings = new SettingsManager(codeBlock, fileSettings, codeBlockSettings)
 
-  SizeManager(containerEl, svg, settings)
+  SizeManager(component, containerEl, svg, settings)
 
   if (markdownView.getMode() === 'source')
     SettingsDialog(codeBlock, body, codeBlockSettings, fileSettings, editor)
@@ -49,8 +50,15 @@ export function CodeBlockRenderer(codeBlock: CodeBlock) {
         ? { ...markmapOptions, duration: 0 }
         : markmapOptions)
 
+    const preferHeightLayoutBeforeFit = shouldPreferHeightLayout(containerEl, Platform.isMobile)
+    applyMobileCodeblockLayout(markmap, containerEl, preferHeightLayoutBeforeFit)
+
     if (initial)
       await fitWithoutAnimation(markmap)
+
+    // Re-apply after fit/resize settles so mobile horizontal-scroll state persists.
+    const preferHeightLayoutAfterFit = shouldPreferHeightLayout(containerEl, Platform.isMobile)
+    applyMobileCodeblockLayout(markmap, containerEl, preferHeightLayoutAfterFit)
 
     const { classList } = containerEl.parentElement!
     settings.merged.highlight
@@ -134,21 +142,50 @@ class SettingsManager {
 
 const EditorLine = (line: number): EditorPosition => ({ line, ch: 0 })
 
-function SizeManager(containerEl: CodeBlock['containerEl'], svg: SVGSVGElement, settings: SettingsManager) {
+function SizeManager(
+  component: CodeBlock['component'],
+  containerEl: CodeBlock['containerEl'],
+  svg: SVGSVGElement,
+  settings: SettingsManager
+) {
   svg.style.height = settings.height + 'px'
 
   const resizeHandle = document.createElement('hr')
   containerEl.prepend(resizeHandle)
   resizeHandle.classList.add('workspace-leaf-resize-handle')
 
+  const syncHandlePosition = () => {
+    const scrolling = containerEl.classList.contains('mmng-mobile-horizontal-scroll')
+    if (scrolling) {
+      resizeHandle.style.width = `${containerEl.clientWidth}px`
+      resizeHandle.style.transform = `translateX(${containerEl.scrollLeft}px)`
+    }
+    else {
+      resizeHandle.style.width = '100%'
+      resizeHandle.style.transform = ''
+    }
+  }
+  syncHandlePosition()
+  containerEl.addEventListener('scroll', syncHandlePosition, { passive: true })
+
+  const resizeObserver = typeof ResizeObserver === 'function'
+    ? new ResizeObserver(syncHandlePosition)
+    : null
+  resizeObserver?.observe(containerEl)
+
   const drag$ = dragAndDrop(resizeHandle)
 
   Callbag.subscribe(drag$, drag => {
     settings.height += drag.changeFromPrevious.y
     svg.style.height = settings.height + 'px'
+    syncHandlePosition()
   })
 
   Callbag.subscribe(fromEvent(document, 'mouseup'), settings.saveHeight)
+  component.register(() => {
+    containerEl.removeEventListener('scroll', syncHandlePosition)
+    resizeObserver?.disconnect()
+  })
 }
 
 function SettingsDialog(codeBlock: CodeBlock, body: string, codeBlockSettings: CodeBlockSettings, fileSettings: FileSettings, editor: Editor) {
