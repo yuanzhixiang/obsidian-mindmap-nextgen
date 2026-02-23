@@ -60,6 +60,10 @@ export default {
         name: '高亮内联思维导图',
         description: '使用高对比背景颜色用于内联思维导图',
       },
+      lockCanvasScroll: {
+        name: '锁定画布滚动',
+        description: '禁用思维导图的滚轮缩放和平移',
+      },
       titleAsRootNode: {
         name: '使用标题作为根节点',
         description: '启用后，思维导图的根节点将使用文档的标题',

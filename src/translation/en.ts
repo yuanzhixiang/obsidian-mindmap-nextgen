@@ -67,6 +67,10 @@ export default {
         name: 'Highlight inline mindmap',
         description: `Use a contrasting background ${color} for inline mindmaps`,
       },
+      lockCanvasScroll: {
+        name: 'Lock canvas scroll',
+        description: 'Disable wheel zoom and pan for mindmaps',
+      },
       titleAsRootNode: {
         name: 'Use title as root node',
         description: 'When on, the root node of the mindmap will be the title of the document',

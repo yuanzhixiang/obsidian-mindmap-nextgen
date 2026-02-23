@@ -60,6 +60,10 @@ export default {
         name: '高亮內聯思維導圖',
         description: '使用高對比背景顏色用於內聯思維導圖',
       },
+      lockCanvasScroll: {
+        name: '鎖定畫布滾動',
+        description: '禁用思維導圖的滾輪縮放和平移',
+      },
       titleAsRootNode: {
         name: '使用標題作為根節點',
         description: '啟用後，思維導圖的根節點將使用文檔的標題',

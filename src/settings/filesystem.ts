@@ -14,6 +14,7 @@ export enum ScreenshotBgStyle {
 // Default settings
 export const defaultSettings: v2['settings'] = {
   splitDirection: 'horizontal',
+  lockCanvasScroll: false,
   nodeMinHeight: 16,
   lineHeight: '1em',
   spacingVertical: 5,
@@ -44,6 +45,7 @@ export const defaultSettings: v2['settings'] = {
 
 type SettingsV2 = {
   splitDirection: SplitDirection
+  lockCanvasScroll: boolean
   nodeMinHeight: number
   lineHeight: string
   spacingVertical: number
@@ -90,6 +92,7 @@ const useDefaultsForMissingKeys =
 
 type OmitFromFileSettings =
 | 'splitDirection'
+| 'lockCanvasScroll'
 | 'screenshotTextColor'
 | 'screenshotTextColorEnabled'
 | 'screenshotBgStyle'

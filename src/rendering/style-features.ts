@@ -51,6 +51,7 @@ settingChanges.listen('colorFreezeLevel', renderAll)
 
 settingChanges.listen('animationDuration', renderAll)
 settingChanges.listen('initialExpandLevel', renderAll)
+settingChanges.listen('lockCanvasScroll', renderAll)
 settingChanges.listen('maxWidth', renderAll)
 settingChanges.listen('nodeMinHeight', renderAll)
 settingChanges.listen('paddingX', renderAll)

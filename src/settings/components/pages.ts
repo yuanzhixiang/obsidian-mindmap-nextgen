@@ -24,6 +24,13 @@ const HighlightInlineMindmap = SettingComponent({
   control: 'toggle'
 })
 
+const LockCanvasScroll = SettingComponent({
+  name: strings.settings.settings.lockCanvasScroll.name,
+  description: strings.settings.settings.lockCanvasScroll.description,
+  key: 'lockCanvasScroll',
+  control: 'toggle'
+})
+
 const TitleAsRootNode = SettingComponent({
   name: strings.settings.settings.titleAsRootNode.name,
   description: strings.settings.settings.titleAsRootNode.description,
@@ -317,6 +324,7 @@ const GlobalPage = () => fragment([
   fragment([
     SplitDirection.global(),
     HighlightInlineMindmap.global(),
+    LockCanvasScroll.global(),
     TitleAsRootNode.global(),
   ]),
   SectionColoringGlobal(),

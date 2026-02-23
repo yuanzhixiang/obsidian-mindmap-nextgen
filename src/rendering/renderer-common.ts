@@ -26,6 +26,9 @@ nextTick().then(() => {
 
 
 export const transformer = new Transformer([ ...builtInPlugins, embedPlugin ])
+const defaultScrollForPan =
+  typeof navigator !== 'undefined' &&
+  navigator.userAgent.includes('Macintosh')
 
 export function transformMarkdown(markdown: string) {
   const { root, features } = transformer.transform(markdown)
@@ -52,18 +55,22 @@ export function loadAssets(features: IFeatures) {
     !s.data?.href.contains('@highlightjs') ))
 }
 
-export function getOptions(settings: CodeBlockSettings): Partial<IMarkmapOptions> {
+export function getOptions(settings: CodeBlockSettings & { lockCanvasScroll?: boolean }): Partial<IMarkmapOptions> {
   const { color: branchColoring } = deriveOptions(pick(['color', 'colorFreezeLevel'], settings))
   const colorFn = {
     branch: branchColoring,
     depth: depthColoring(settings),
     single: () => settings.defaultColor
   }[settings.coloring]
+  const interaction = settings.lockCanvasScroll
+    ? { zoom: false, pan: false, scrollForPan: false }
+    : { zoom: true, pan: true, scrollForPan: defaultScrollForPan }
 
   return {
     autoFit: false,
     fitRatio: 1,
     duration: settings.animationDuration,
+    ...interaction,
     ...pick([
       'initialExpandLevel',
       'maxWidth',
