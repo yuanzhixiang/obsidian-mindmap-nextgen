@@ -4,7 +4,7 @@ import { IPureNode } from 'markmap-common'
 
 import { FileSettings, globalSettings } from 'src/settings/filesystem'
 import { ScreenshotColors, takeScreenshot } from 'src/rendering/screenshot'
-import { createMarkmap, getOptions, transformMarkdown, splitMarkdown } from './renderer-common'
+import { createMarkmap, fitWithoutAnimation, getOptions, transformMarkdown, splitMarkdown } from './renderer-common'
 import { MindmapTab } from 'src/utilities/types'
 import { svgs } from 'src/internal-links/handle-internal-links'
 
@@ -44,11 +44,10 @@ export function TabRenderer(containerEl: MindmapTab.View['containerEl']) {
   async function firstRender(file: TFile) {
     if (state.hasRendered) return
     state.hasRendered = true
-    await render(file)
-    markmap.fit()
+    await render(file, undefined, true)
   }
 
-  async function render(file: TFile, content?: string) {
+  async function render(file: TFile, content?: string, initial = false) {
     svgs.set(svg, file)
 
     if (!state.hasRendered) return
@@ -65,7 +64,13 @@ export function TabRenderer(containerEl: MindmapTab.View['containerEl']) {
 
     state.markmapOptions = markmapOptions
 
-    await markmap.setData(rootNode, markmapOptions)
+    await markmap.setData(rootNode,
+      initial
+        ? { ...markmapOptions, duration: 0 }
+        : markmapOptions)
+
+    if (initial)
+      await fitWithoutAnimation(markmap)
   }
 
   function addTitleToRootNode(root: IPureNode, title: string) {

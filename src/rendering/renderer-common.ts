@@ -114,6 +114,28 @@ export function createMarkmap({ parent, toolbar }: { parent: ParentNode, toolbar
     return { svg, markmap }
 }
 
+const nextFrame = () => new Promise<void>(resolve => {
+  if (typeof requestAnimationFrame === 'function')
+    requestAnimationFrame(() => resolve())
+  else
+    setTimeout(resolve, 16)
+})
+
+// Initial rendering sometimes happens before layout settles; fitting twice on
+// animation frames produces a stable full-size viewport without visible zoom-in.
+export async function fitWithoutAnimation(markmap: Markmap) {
+  const previousDuration = markmap.options.duration
+  markmap.setOptions({ duration: 0 })
+
+  await nextFrame()
+  await nextFrame()
+  await markmap.fit()
+  await nextFrame()
+  await markmap.fit()
+
+  markmap.setOptions({ duration: previousDuration })
+}
+
 class Stylesheet {
   private sheet: CSSStyleSheet
   private rules: CSSRule[]

@@ -5,7 +5,7 @@ import GrayMatter from 'gray-matter'
 import { CodeBlockSettings, FileSettings, globalSettings, GlobalSettings } from 'src/settings/filesystem'
 import { cssClasses } from 'src/constants'
 import { assert, isObjectEmpty, notNullish } from 'src/utilities/utilities'
-import { createMarkmap, getOptions, transformMarkdown, splitMarkdown } from 'src/rendering/renderer-common'
+import { createMarkmap, fitWithoutAnimation, getOptions, transformMarkdown, splitMarkdown } from 'src/rendering/renderer-common'
 import { renderCodeblocks$ } from 'src/rendering/style-features'
 import Callbag, { dragAndDrop, fromEvent } from 'src/utilities/callbag'
 import { CodeBlockSettingsDialog } from 'src/settings/dialogs'
@@ -35,21 +35,26 @@ export function CodeBlockRenderer(codeBlock: CodeBlock) {
   if (markdownView.getMode() === 'source')
     SettingsDialog(codeBlock, body, codeBlockSettings, fileSettings, editor)
 
-  render().then(() =>
-    markmap.fit())
+  void render(true)
 
-  Callbag.subscribe(renderCodeblocks$, render)
+  Callbag.subscribe(renderCodeblocks$, () => {
+    void render()
+  })
 
-  function render() {
+  async function render(initial = false) {
     const markmapOptions = getOptions(settings.merged)
-    const promise = markmap.setData(rootNode, markmapOptions)
+    await markmap.setData(rootNode,
+      initial
+        ? { ...markmapOptions, duration: 0 }
+        : markmapOptions)
+
+    if (initial)
+      await fitWithoutAnimation(markmap)
 
     const { classList } = containerEl.parentElement!
     settings.merged.highlight
       ? classList.add   (cssClasses.highlight)
       : classList.remove(cssClasses.highlight)
-
-    return promise
   }
 }
 
