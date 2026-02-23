@@ -152,6 +152,44 @@
     padding-top: 0.75em
 }
 
+/* ========================================================== */
+/* Specific fixes for the Edit block settings Modal spacing   */
+/* ========================================================== */
+
+.mmng-settings-modal .modal-content .mmng-level-selector {
+    /* Prevent top sticking, remove massive blank spaces */
+    padding-top: 18px !important;
+    /* Create a compact distance below buttons */
+    padding-bottom: 12px !important;
+    
+    /* Horizontal alignment consistency */
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    
+    /* Move border here */
+    border-bottom: 1px solid var(--background-modifier-border) !important;
+}
+
+.mmng-settings-modal .modal-content .mmng-level-selector .setting-item {
+    /* Clear inner setting-item margin/padding/border to avoid double gap */
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.mmng-settings-modal .modal-content .mmng-main {
+    /* Align horizontally with header */
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    padding-bottom: 24px !important;
+}
+
+.mmng-settings-modal .modal-content .mmng-main > .setting-item:first-child {
+    /* Exactly 12px gap below header border */
+    padding-top: 12px !important;
+    border-top: none !important;
+}
+
 .setting-item.mmng-faded {
     opacity: 40%
 }
