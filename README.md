@@ -8,6 +8,7 @@ Obsidian plugin to view your notes as mindmaps using [Markmap](https://markmap.j
 [<img src="https://github.com/user-attachments/assets/dcbda58a-454d-4d45-93ee-0901449ce8c6" width="200">](https://checkout.revolut.com/pay/b8fb99ec-f2b0-4166-a58a-04d4d43d010f)
 
 ## Table of contents
++ [Fork-specific changes](#fork-specific-changes)
 + [Usage](#usage)
 + ["More options" menu](#more-options-menu)
   + [Pin/Unpin](#pinunpin)
@@ -28,6 +29,52 @@ Obsidian plugin to view your notes as mindmaps using [Markmap](https://markmap.j
 + [Installing](#installing)
 + [Contributing](#contributing)
 
+## Fork-specific changes
+
+This fork contains additional behavior and maintenance changes beyond the upstream project.
+
+### 1) Canvas scroll lock (new setting)
+
+- Added a global setting: **Lock canvas scroll**.
+- When enabled, markmap interaction is locked (`zoom`, `pan`, `scrollForPan` all disabled).
+- Purpose: prevent accidental mindmap zoom/pan while you are scrolling notes.
+- It now defaults to **enabled** in this fork.
+
+### 2) Better first-open rendering (no zoom-in jump)
+
+- Improved initial render for both:
+  - inline ` ```markmap ` code blocks
+  - standalone mindmap tabs
+- First paint is now fit-to-view without transition animation.
+- Added a stability fit strategy (multi-frame + double fit) to reduce cases where map stops before reaching best-fit.
+
+### 3) UI polish for settings modal
+
+- Adjusted spacing/layout in the **Edit block settings** modal header/content area.
+- Goal: remove uneven top spacing and make `global / file / codeBlock` and first setting item align consistently.
+
+### 4) Removed note-header action icon (fork preference)
+
+- Disabled the extra right-top note header action button added by this plugin.
+- Behavior is now opt-out by default in this fork (no automatic action icon registration).
+
+### 5) Build/runtime compatibility fixes
+
+- Added `esbuild-register` for stable `webpack.config.ts` loading in local environments.
+- Updated webpack output path resolution for better compatibility across config loaders.
+- Fixed a TypeScript typing issue in `nextTick()` implementation.
+
+### 6) Added unit tests for fork changes
+
+This fork adds/updates tests for the changes above, including:
+
+- interaction option behavior for scroll lock
+- initial fit-without-animation behavior
+- render refresh trigger on `lockCanvasScroll` changes
+- default settings expectation (`lockCanvasScroll` enabled)
+- file settings button registration behavior (disabled by default, optional enable path)
+
+Plus one existing test expectation was corrected to match current markdown-it behavior for links containing spaces in URL.
 
 ## Usage
 
