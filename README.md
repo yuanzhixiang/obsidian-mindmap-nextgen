@@ -246,6 +246,10 @@ There is a section in the plugin settings for adjusting the shape and size of di
 ### Releasing a new version
 
 * ensure dependency installed: jq
-* run release-1.sh
-* merge the created branch into main via pull request
-* run release-2.sh to create a tag which triggers a Github action to push the new release to the Obsidian plugins registry
+* recommended (single-step on main): run `./release.sh <plugin-version> <minimum-obsidian-version>`
+  * example: `./release.sh 0.0.1 1.0.0`
+  * this updates `package.json` / `manifest.json` / `versions.json`, commits to `main`, pushes `main`, then creates and pushes the release tag
+* legacy (two-step):
+  * run `release-1.sh`
+  * merge the created branch into main via pull request
+  * run `release-2.sh` to create a tag which triggers a Github action to push the new release to the Obsidian plugins registry
