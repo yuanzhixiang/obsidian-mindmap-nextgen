@@ -11,6 +11,7 @@ import { parseInternalLinks } from 'src/internal-links/parse-internal-links'
 import { embedPlugin } from 'src/embeds/embeds'
 import { nextTick } from 'src/utilities/utilities'
 import { getFrontMatterInfo } from 'obsidian'
+import { getInteractionOptions } from './interaction-options'
 
 
 const styleEl = createEl('style', {
@@ -26,9 +27,6 @@ nextTick().then(() => {
 
 
 export const transformer = new Transformer([ ...builtInPlugins, embedPlugin ])
-const defaultScrollForPan =
-  typeof navigator !== 'undefined' &&
-  navigator.userAgent.includes('Macintosh')
 
 export function transformMarkdown(markdown: string) {
   const { root, features } = transformer.transform(markdown)
@@ -62,9 +60,7 @@ export function getOptions(settings: CodeBlockSettings & { lockCanvasScroll?: bo
     depth: depthColoring(settings),
     single: () => settings.defaultColor
   }[settings.coloring]
-  const interaction = settings.lockCanvasScroll
-    ? { zoom: false, pan: false, scrollForPan: false }
-    : { zoom: true, pan: true, scrollForPan: defaultScrollForPan }
+  const interaction = getInteractionOptions(settings.lockCanvasScroll)
 
   return {
     autoFit: false,
@@ -112,28 +108,6 @@ export function createMarkmap({ parent, toolbar }: { parent: ParentNode, toolbar
   }
   else
     return { svg, markmap }
-}
-
-const nextFrame = () => new Promise<void>(resolve => {
-  if (typeof requestAnimationFrame === 'function')
-    requestAnimationFrame(() => resolve())
-  else
-    setTimeout(resolve, 16)
-})
-
-// Initial rendering sometimes happens before layout settles; fitting twice on
-// animation frames produces a stable full-size viewport without visible zoom-in.
-export async function fitWithoutAnimation(markmap: Markmap) {
-  const previousDuration = markmap.options.duration
-  markmap.setOptions({ duration: 0 })
-
-  await nextFrame()
-  await nextFrame()
-  await markmap.fit()
-  await nextFrame()
-  await markmap.fit()
-
-  markmap.setOptions({ duration: previousDuration })
 }
 
 class Stylesheet {

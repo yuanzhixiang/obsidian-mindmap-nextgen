@@ -5,13 +5,14 @@ import GrayMatter from 'gray-matter'
 import { CodeBlockSettings, FileSettings, globalSettings, GlobalSettings } from 'src/settings/filesystem'
 import { cssClasses } from 'src/constants'
 import { assert, isObjectEmpty, notNullish } from 'src/utilities/utilities'
-import { createMarkmap, fitWithoutAnimation, getOptions, transformMarkdown, splitMarkdown } from 'src/rendering/renderer-common'
+import { createMarkmap, getOptions, transformMarkdown, splitMarkdown } from 'src/rendering/renderer-common'
 import { renderCodeblocks$ } from 'src/rendering/style-features'
 import Callbag, { dragAndDrop, fromEvent } from 'src/utilities/callbag'
 import { CodeBlockSettingsDialog } from 'src/settings/dialogs'
 import { CodeBlock } from 'src/new/codeBlockHandler'
 import { svgs } from 'src/internal-links/handle-internal-links'
 import { strings } from 'src/translation'
+import { fitWithoutAnimation } from './fit-without-animation'
 
 
 export type CodeBlockRenderer = ReturnType<typeof CodeBlockRenderer>

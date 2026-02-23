@@ -4,9 +4,10 @@ import { IPureNode } from 'markmap-common'
 
 import { FileSettings, globalSettings } from 'src/settings/filesystem'
 import { ScreenshotColors, takeScreenshot } from 'src/rendering/screenshot'
-import { createMarkmap, fitWithoutAnimation, getOptions, transformMarkdown, splitMarkdown } from './renderer-common'
+import { createMarkmap, getOptions, transformMarkdown, splitMarkdown } from './renderer-common'
 import { MindmapTab } from 'src/utilities/types'
 import { svgs } from 'src/internal-links/handle-internal-links'
+import { fitWithoutAnimation } from './fit-without-animation'
 
 
 export type TabRenderer = ReturnType<typeof TabRenderer>

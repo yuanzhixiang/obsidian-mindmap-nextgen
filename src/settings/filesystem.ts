@@ -14,7 +14,7 @@ export enum ScreenshotBgStyle {
 // Default settings
 export const defaultSettings: v2['settings'] = {
   splitDirection: 'horizontal',
-  lockCanvasScroll: false,
+  lockCanvasScroll: true,
   nodeMinHeight: 16,
   lineHeight: '1em',
   spacingVertical: 5,
